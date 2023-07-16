@@ -1,0 +1,8 @@
+crear una app
+ember new <nombre> --dry-run --lang en
+
+levantr el servidor
+npm start
+
+crear una ruta que renderiza una pagina
+ember generate route <nombre>
