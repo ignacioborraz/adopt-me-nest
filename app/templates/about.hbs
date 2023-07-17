@@ -1,8 +1,4 @@
 <h2>ABOUT</h2>
 {{#each @model as |one|}}
-    <article id={{one.id}}>
-        <a href={{one.link}}>
-            <h3>{{one.title}}</h3>
-        </a>
-    </article>
+    <BookmarkListening @one={{one}} />
 {{/each}}
