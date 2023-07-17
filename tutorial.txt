@@ -6,3 +6,6 @@ npm start
 
 crear una ruta que renderiza una pagina
 ember generate route <nombre>
+
+crear un componente
+ember g component <nombre>
