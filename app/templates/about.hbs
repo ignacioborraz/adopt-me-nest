@@ -1,4 +1,4 @@
-<h2>ABOUT</h2>
-{{#each @model as |one|}}
-    <BookmarkListening @one={{one}} />
+<h2>About</h2>
+{{#each model as |bookmark|}}
+	{{bookmark-listing bookmark=bookmark}}
 {{/each}}

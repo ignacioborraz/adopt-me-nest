@@ -1,23 +1,22 @@
-'use strict';
+/* jshint node: true */
 
-module.exports = function (environment) {
-  const ENV = {
-    modulePrefix: 'ember-in',
-    environment,
-    rootURL: '/',
-    locationType: 'history',
+module.exports = function(environment) {
+  var ENV = {
+    modulePrefix: 'bookmarker',
+    environment: environment,
+    baseURL: '/',
+    locationType: 'auto',
     EmberENV: {
-      EXTEND_PROTOTYPES: false,
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
-        // e.g. EMBER_NATIVE_DECORATOR_SUPPORT: true
-      },
+        // e.g. 'with-controller': true
+      }
     },
 
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-    },
+    }
   };
 
   if (environment === 'development') {
@@ -30,6 +29,7 @@ module.exports = function (environment) {
 
   if (environment === 'test') {
     // Testem prefers this...
+    ENV.baseURL = '/';
     ENV.locationType = 'none';
 
     // keep test console output quieter
@@ -37,11 +37,10 @@ module.exports = function (environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
-    ENV.APP.autoboot = false;
   }
 
   if (environment === 'production') {
-    // here you can enable a production-specific feature
+
   }
 
   return ENV;

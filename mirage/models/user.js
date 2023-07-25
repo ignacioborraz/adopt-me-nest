@@ -1,5 +1,5 @@
-import { Model } from 'miragejs';
+import { Model, hasMany } from 'ember-cli-mirage';
 
 export default Model.extend({
-    bookmark: hasMany()
+  bookmarks: hasMany()
 });

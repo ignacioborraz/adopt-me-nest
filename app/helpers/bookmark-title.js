@@ -1,9 +1,11 @@
-import { helper } from '@ember/component/helper';
+import Ember from 'ember';
 
-export default helper(function bookmarkTitle([title, about] /*, named*/) {
+export function bookmarkTitle([title, about]/*, hash*/) {
   let returnStr = title;
   if (about != null) {
     returnStr += ' - ' + about;
   }
   return returnStr;
-});
+}
+
+export default Ember.Helper.helper(bookmarkTitle);
