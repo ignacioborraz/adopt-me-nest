@@ -1,0 +1,9 @@
+{{#each model as |user|}}
+    <p>{{user.firstName}} - {{user.lastName}}</p>
+    <ul>
+        {{#each user.bookmarks as |bookmark|}}
+        <li>{{bookmark.title}}</li>
+        {{/each}}
+    </ul>
+{{/each}}
+{{outlet}}
