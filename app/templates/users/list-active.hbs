@@ -1,5 +1,5 @@
 {{#each model as |user|}}
-    <p>{{user.firstName}} - {{user.lastName}}</p>
+    <p>{{user.fullName}}</p>
     <ul>
         {{#each user.bookmarks as |bookmark|}}
         <li>{{bookmark.title}}</li>
