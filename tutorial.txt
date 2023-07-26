@@ -5,7 +5,14 @@ levantr el servidor
 npm start
 
 crear una ruta que renderiza una pagina
-ember generate route <nombre>
+    ember generate route <nombre>
+ruta anidada
+    ember generate route <nombre>/<sub-nombre>
+ruta dinamica
+    ember generate route --path /edit/:product_id
 
 crear un componente
 ember g component <nombre>
+
+model() es un hoook que utilizamos para cargar datos en los estados
+renderTemplate() es un hook que usamos para renderizar otro template en una vista
