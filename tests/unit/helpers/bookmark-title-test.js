@@ -10,3 +10,4 @@ test('it works', function(assert) {
   result = bookmarkTitle(['canary',null]);
   assert.equal(result,'canary');
 });
+ 
