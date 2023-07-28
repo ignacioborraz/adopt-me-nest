@@ -21,3 +21,15 @@ renderTemplate() es un hook que usamos para renderizar otro template en una vist
 crear un modelo
     ember g model user
     ember g model user username:string email:srting firstName:string lastName:string avatar:string isAdmin:boolean created:date
+
+testing
+    acceptance: verifica la realidad de la app
+    unit: verifica una unica cosa
+    integrate: verifica la interaccion de la realidad con la funcionalidad
+
+QUnit.test('hello test), function(assert) {
+    assert.ok(1=="1,"Passed!)
+})
+
+ember test --server
+ember g acceptance-test bookmark-delete
