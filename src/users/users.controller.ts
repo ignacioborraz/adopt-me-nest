@@ -1,81 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query, Request } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { randomBytes } from "crypto"
+import { ConfigService } from '@nestjs/config';
 
-@Controller('users')
+@Controller('auth')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService, private config: ConfigService) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  @Post("register")
+  async register(@Body() createUserDto: CreateUserDto) {
     try {
       if (!createUserDto.email || !createUserDto.password) {
         throw new HttpException("Incomplete request", HttpStatus.BAD_REQUEST)
       }
-      let pet = this.usersService.create(createUserDto);
-      return { statusCode: 201, response: pet }
+      let one = await this.usersService.create(createUserDto);
+      return { statusCode: 201, response: one._id }
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  @Get()
-  findAll(@Query('limit') limit: number, @Query('page') page: number) {
+  @Post("login")
+  async login() {
     try {
-      if (!limit) limit = 5
-      if (!page) page = 1
-      let from = (page - 1) * limit
-      let to = from + Number(limit)
-      let pets = this.usersService.findAll(from, to);
-      if (pets.length > 0) {
-        return { statusCode: 200, response: pets }
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      return { statusCode: 200, response: "Logged in" }
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Post("signout")
+  async signout() {
     try {
-      let pet = this.usersService.findOne(id);
-      if (pet) {
-        return { statusCode: 200, response: pet }
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      return { statusCode: 200, response: "Signed out" }
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  @Patch(':id')
-  update(@Request() req) {
-    try {
-      let id = req.params.id
-      let updatePetDto: UpdateUserDto = req.body
-      let pet = this.usersService.update(id, updatePetDto);
-      if (pet) {
-        return { statusCode: 200, response: pet }
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    try {
-      let pet = this.usersService.remove(id);
-      if (pet) {
-        return { statusCode: 200, response: pet }
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
 }

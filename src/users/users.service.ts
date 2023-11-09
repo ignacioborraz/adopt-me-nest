@@ -1,73 +1,64 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from "./entities/user.entity"
-import { randomBytes } from 'crypto';
+import { User, UsersDocument } from './schema/users.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  users: Array<User>
-  constructor() {
-    this.users = []
-  }
-  create(createUserDto: CreateUserDto) {
+  constructor(@InjectModel(User.name) private UserModel: Model<UsersDocument>) { }
+  async create(createUserDto: CreateUserDto) {
     try {
-      createUserDto._id = randomBytes(12).toString("hex")
-      this.users.push(createUserDto)
-      return createUserDto
+      let one = await this.UserModel.create(createUserDto)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findAll(from: number, to: number) {
+  async findAll(from: number, to: number) {
     try {
-      if (this.users.length > 0) {
-        return this.users.slice(from, to)
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let all = await this.UserModel.find().skip(from).limit(to)
+      return all
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      let one = this.users.find(each => each._id === id)
-      if (one) {
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.UserModel.findById(id)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  async findByEmail(email: string) {
     try {
-      let one = this.users.find(each => each._id === id)
-      if (one) {
-        for (let prop in updateUserDto) {
-          one[prop] = updateUserDto[prop];
-        }
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.UserModel.findOne({ email })
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  remove(id: string) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      let one = this.users.find(each => each._id === id)
-      if (one) {
-        this.users = this.users.filter(each => each._id !== id)
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.UserModel.findByIdAndUpdate(id, updateUserDto, { new: true })
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      let one = await this.UserModel.findByIdAndDelete(id)
+      return one
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
     }
   }
 }

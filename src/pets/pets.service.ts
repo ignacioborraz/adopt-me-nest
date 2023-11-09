@@ -1,73 +1,55 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
-import { Pet } from "./entities/pet.entity"
-import { randomBytes } from 'crypto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Pet, PetsDocument } from './schema/pets.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PetsService {
-  pets: Array<Pet>
-  constructor() {
-    this.pets = []
-  }
-  create(createPetDto: CreatePetDto) {
+  constructor(@InjectModel(Pet.name) private PetModel: Model<PetsDocument>) { }
+  async create(createPetDto: CreatePetDto) {
     try {
-      createPetDto._id = randomBytes(12).toString("hex")
-      this.pets.push(createPetDto)
-      return createPetDto
+      let one = await this.PetModel.create(createPetDto)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findAll(from: number, to: number) {
+  async findAll(from: number, to: number) {
     try {
-      if (this.pets.length > 0) {
-        return this.pets.slice(from, to)
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let all = await this.PetModel.find().skip(from).limit(to)
+      return all
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      let one = this.pets.find(each => each._id === id)
-      if (one) {
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.PetModel.findById(id)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  update(id: string, updatePetDto: UpdatePetDto) {
+  async update(id: string, updatePetDto: UpdatePetDto) {
     try {
-      let one = this.pets.find(each => each._id === id)
-      if (one) {
-        for (let prop in updatePetDto) {
-          one[prop] = updatePetDto[prop];
-        }
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.PetModel.findByIdAndUpdate(id, updatePetDto, { new: true })      
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      let one = this.pets.find(each => each._id === id)
-      if (one) {
-        this.pets = this.pets.filter(each => each._id !== id)
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.PetModel.findByIdAndDelete(id)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 }

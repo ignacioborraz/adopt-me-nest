@@ -1,73 +1,55 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateAdoptionDto } from './dto/create-adoption.dto';
 import { UpdateAdoptionDto } from './dto/update-adoption.dto';
-import { Adoption } from "./entities/adoption.entity"
-import { randomBytes } from 'crypto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Adoption, AdoptionsDocument } from './schema/adoptions.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AdoptionsService {
-  adoptions: Array<Adoption>
-  constructor() {
-    this.adoptions = []
-  }
-  create(createAdoptionDto: CreateAdoptionDto) {
+  constructor(@InjectModel(Adoption.name) private AdoptionModel: Model<AdoptionsDocument>) { }
+  async create(createAdoptionDto: CreateAdoptionDto) {
     try {
-      createAdoptionDto._id = randomBytes(12).toString("hex")
-      this.adoptions.push(createAdoptionDto)
-      return createAdoptionDto
+      let one = await this.AdoptionModel.create(createAdoptionDto)      
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findAll(from: number, to: number) {
+  async findAll(from: number, to: number) {
     try {
-      if (this.adoptions.length > 0) {
-        return this.adoptions.slice(from, to)
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let all = await this.AdoptionModel.find().skip(from).limit(to)
+      return all
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      let one = this.adoptions.find(each => each._id === id)
-      if (one) {
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.AdoptionModel.findById(id)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  update(id: string, updateAdoptionDto: UpdateAdoptionDto) {
+  async update(id: string, updateAdoptionDto: UpdateAdoptionDto) {
     try {
-      let one = this.adoptions.find(each => each._id === id)
-      if (one) {
-        for (let prop in updateAdoptionDto) {
-          one[prop] = updateAdoptionDto[prop];
-        }
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.AdoptionModel.findByIdAndUpdate(id, updateAdoptionDto, { new: true })
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      let one = this.adoptions.find(each => each._id === id)
-      if (one) {
-        this.adoptions = this.adoptions.filter(each => each._id !== id)
-        return one
-      }
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND)
+      let one = await this.AdoptionModel.findByIdAndDelete(id)
+      return one
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(error.message, error.status)
     }
   }
 }
