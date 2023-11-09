@@ -16,4 +16,4 @@ import { Adoption, AdoptionsSchema } from 'src/adoptions/schema/adoptions.schema
   controllers: [AdoptionsController],
   providers: [AdoptionsService],
 })
-export class AdoptionsModule {}
+export class AdoptionsModule { }

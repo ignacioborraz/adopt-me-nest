@@ -10,7 +10,7 @@ export class AdoptionsService {
   constructor(@InjectModel(Adoption.name) private AdoptionModel: Model<AdoptionsDocument>) { }
   async create(createAdoptionDto: CreateAdoptionDto) {
     try {
-      let one = await this.AdoptionModel.create(createAdoptionDto)      
+      let one = await this.AdoptionModel.create(createAdoptionDto)
       return one
     } catch (error) {
       throw new HttpException(error.message, error.status)

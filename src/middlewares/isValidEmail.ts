@@ -8,6 +8,6 @@ export default class IsAllow implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     let one = await this.usersService.findByEmail(req.body.email)
     if (!one) return next()
-    throw new HttpException("Invalid credentials",HttpStatus.UNAUTHORIZED)
+    throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED)
   }
 }

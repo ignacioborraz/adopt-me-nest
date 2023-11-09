@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable, NestMiddleware } from "@nestjs/common";
-import { Request,Response,NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { UsersService } from "src/users/users.service";
 import { compare } from "bcrypt";
 
@@ -9,9 +9,9 @@ export default class IsValidUser implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     let one = await this.usersService.findByEmail(req.body.email)
     if (one) {
-      let verified = await compare(req.body.password,one.password)
+      let verified = await compare(req.body.password, one.password)
       if (verified) return next()
     }
-    throw new HttpException("Invalid credentials",HttpStatus.UNAUTHORIZED)
+    throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED)
   }
 }

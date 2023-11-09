@@ -7,7 +7,7 @@ export default class CreateToken implements NestMiddleware {
   constructor(private jwtService: JwtService) { }
   use(req: Request, res: Response, next: NextFunction) {
     const token = this.jwtService.sign(req.body.email)
-    res.cookie("token",token);
+    res.cookie("token", token);
     return next()
   }
 }

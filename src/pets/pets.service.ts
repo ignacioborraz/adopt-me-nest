@@ -37,7 +37,7 @@ export class PetsService {
 
   async update(id: string, updatePetDto: UpdatePetDto) {
     try {
-      let one = await this.PetModel.findByIdAndUpdate(id, updatePetDto, { new: true })      
+      let one = await this.PetModel.findByIdAndUpdate(id, updatePetDto, { new: true })
       return one
     } catch (error) {
       throw new HttpException(error.message, error.status)

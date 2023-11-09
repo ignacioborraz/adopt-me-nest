@@ -56,10 +56,10 @@ export class PetsController {
   async update(@Request() req) {
     try {
       console.log(req);
-      
+
       let id = req.params.id
       let updatePetDto: UpdatePetDto = req.body
-      let one = await this.petsService.update(id, updatePetDto);      
+      let one = await this.petsService.update(id, updatePetDto);
       if (one) {
         return { statusCode: 200, updated: one._id, req }
       }
